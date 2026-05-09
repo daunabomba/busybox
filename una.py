@@ -22,7 +22,7 @@ def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
     cmd = [
         "make",
         f"CROSS_COMPILE={cross}",
-        "V=1",
+        "V=2",
         "HOSTCC=clang",
         "CC=clang",
         "AR=llvm-ar",
@@ -55,7 +55,7 @@ def target_build(staging_dir: Path, image_dir: Path, arch="x32"):
     cmd = [
         "make",
         f"CROSS_COMPILE={cross}",
-        "V=1",
+        "V=2",
         "HOSTCC=clang",
         "CC=clang",
         "AR=llvm-ar",
@@ -81,7 +81,7 @@ def target_install(staging_dir: Path, image_dir: Path, arch="x32"):
         "make",
         f"CONFIG_PREFIX={image_dir}",
         f"CROSS_COMPILE={cross}",
-        "V=1",
+        "V=2",
         "HOSTCC=clang",
         "CC=clang",
         "AR=llvm-ar",
