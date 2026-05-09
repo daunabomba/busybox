@@ -41,6 +41,14 @@ def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
     if config_path.exists():
         content = config_path.read_text()
         content = content.replace("CONFIG_STATIC_LIBGCC=y", "# CONFIG_STATIC_LIBGCC is not set")
+        # Disable hardware acceleration options
+        hwaccel_options = [
+            "CONFIG_SHA1_HWACCEL",
+            "CONFIG_SHA256_HWACCEL", 
+        ]
+        for option in hwaccel_options:
+            content = content.replace(f"{option}=y", f"# {option} is not set")
+
         config_path.write_text(content)
 
 def target_build(staging_dir: Path, image_dir: Path, arch="x32"):
