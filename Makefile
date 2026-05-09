@@ -273,7 +273,7 @@ MAKEFLAGS += --include-dir=$(srctree)
 
 HOSTCC  	= gcc
 HOSTCXX  	= g++
-HOSTCFLAGS	:= -fcf-protection=none
+HOSTCFLAGS	:=
 HOSTCXXFLAGS	:=
 # We need some generic definitions
 include $(srctree)/scripts/Kbuild.include
