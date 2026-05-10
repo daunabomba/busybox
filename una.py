@@ -4,12 +4,7 @@ import multiprocessing
 from pathlib import Path
 from mods.utils import get_cross_prefix
 from mods import colors
-
-def get_env():
-    env = os.environ.copy()
-    host_bin = Path(__file__).parent.parent.parent / "bld" / "host" / "bin"
-    env["PATH"] = f"{host_bin}:{env.get('PATH', '')}"
-    return env
+from mods.build import get_build_env
 
 def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
     colors.info(f"Busybox: target_configure (defconfig) for {arch}")
@@ -33,7 +28,7 @@ def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
         f"CFLAGS_busybox={static_flags}",
         "defconfig"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_env(), check=True)
+    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
     
     # Disable CONFIG_STATIC_LIBGCC as we use Clang/LLVM runtimes
     colors.info(f"Busybox: disabling CONFIG_STATIC_LIBGCC")
@@ -74,7 +69,7 @@ def target_build(staging_dir: Path, image_dir: Path, arch="x32"):
         f"CFLAGS_busybox={static_flags}",
         f"-j{make_jobs}"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_env(), check=True)
+    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
 
 def target_install(staging_dir: Path, image_dir: Path, arch="x32"):
     colors.info(f"Busybox: target_install ({arch})")
@@ -101,4 +96,4 @@ def target_install(staging_dir: Path, image_dir: Path, arch="x32"):
         "install",
         f"-j{make_jobs}"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_env(), check=True)
+    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
