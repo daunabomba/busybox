@@ -3,8 +3,25 @@ import os
 import multiprocessing
 from pathlib import Path
 from mods.utils import get_cross_prefix
+from mods.build import SubprocessRunner
 from mods import colors
 from mods.build import get_build_env
+
+
+# Module-level runner, initialized when needed
+_runner = None
+
+def _get_runner(trace_file=None):
+    """Get or create the subprocess runner."""
+    global _runner
+    if _runner is None:
+        _runner = SubprocessRunner(trace_file)
+    return _runner
+
+def set_trace_file(trace_file):
+    """Set the trace file for subprocess logging."""
+    global _runner
+    _runner = SubprocessRunner(trace_file)
 
 def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
     colors.info(f"Busybox: target_configure (defconfig) for {arch}")
@@ -28,7 +45,7 @@ def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
         f"CFLAGS_busybox={static_flags}",
         "defconfig"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
+    _get_runner().run(cmd, cwd=repo_root, env=get_build_env(), check=True)
     
     # Disable CONFIG_STATIC_LIBGCC as we use Clang/LLVM runtimes
     colors.info(f"Busybox: disabling CONFIG_STATIC_LIBGCC")
@@ -69,7 +86,7 @@ def target_build(staging_dir: Path, image_dir: Path, arch="x32"):
         f"CFLAGS_busybox={static_flags}",
         f"-j{make_jobs}"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
+    _get_runner().run(cmd, cwd=repo_root, env=get_build_env(), check=True)
 
 def target_install(staging_dir: Path, image_dir: Path, arch="x32"):
     colors.info(f"Busybox: target_install ({arch})")
@@ -96,4 +113,4 @@ def target_install(staging_dir: Path, image_dir: Path, arch="x32"):
         "install",
         f"-j{make_jobs}"
     ]
-    subprocess.run(cmd, cwd=repo_root, env=get_build_env(), check=True)
+    _get_runner().run(cmd, cwd=repo_root, env=get_build_env(), check=True)
