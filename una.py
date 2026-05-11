@@ -52,6 +52,7 @@ def target_configure(staging_dir: Path, image_dir: Path, arch="x32"):
     config_path = repo_root / ".config"
     if config_path.exists():
         content = config_path.read_text()
+        content = content.replace("CONFIG_FEATURE_SKIP_ROOTFS=y", "# CONFIG_FEATURE_SKIP_ROOTFS is not set")
         content = content.replace("CONFIG_STATIC_LIBGCC=y", "# CONFIG_STATIC_LIBGCC is not set")
         # Disable hardware acceleration options
         hwaccel_options = [
